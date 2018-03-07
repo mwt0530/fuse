@@ -90,6 +90,15 @@ func NewFileSystemServer(fs FileSystem) fuse.Server {
 type fileSystemServer struct {
 	fs          FileSystem
 	opsInFlight sync.WaitGroup
+	stopped     bool
+}
+
+func (s *fileSystemServer) Stop() {
+	s.stopped = true
+}
+
+func (s *fileSystemServer) Stopped() bool {
+	return s.stopped
 }
 
 func (s *fileSystemServer) ServeOps(c *fuse.Connection) {
@@ -101,6 +110,11 @@ func (s *fileSystemServer) ServeOps(c *fuse.Connection) {
 	}()
 
 	for {
+		if s.stopped {
+			// stopped is set when restart signal is received
+			break
+		}
+
 		ctx, op, err := c.ReadOp()
 		if err == io.EOF {
 			break
