@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	_ "qs_common/log"
 	"syscall"
 )
 
@@ -113,8 +114,8 @@ func triggerOps(dir string) {
 }
 
 func MountWithGraceful(
+	gr *Graceful,
 	dir string,
-	rundir string,
 	server Server,
 	config *MountConfig) (mfs *MountedFileSystem, err error) {
 	// Sanity check: make sure the mount point exists and is a directory. This
@@ -141,7 +142,7 @@ func MountWithGraceful(
 
 	// Begin the mounting process, which will continue in the background.
 	ready := make(chan error, 1)
-	gr := NewGraceful(config.DebugLogger, rundir, "qfs-fuse")
+	//gr := NewGraceful(logger, rundir, "qfs-fuse")
 	// Get file handle of /dev/fuse
 	err = gr.GetDev(dir, config, ready)
 	if err != nil {

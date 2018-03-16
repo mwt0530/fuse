@@ -18,9 +18,9 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path"
+	"qs_common/log"
 	"runtime"
 	"sync"
 	"syscall"
@@ -58,8 +58,8 @@ const maxReadahead = 1 << 20
 // receive and reply to requests from the kernel.
 type Connection struct {
 	cfg         MountConfig
-	debugLogger *log.Logger
-	errorLogger *log.Logger
+	debugLogger log.Logger
+	errorLogger log.Logger
 
 	// The device through which we're talking to the kernel, and the protocol
 	// version that we're using to talk to it.
@@ -93,8 +93,8 @@ type opState struct {
 // The loggers may be nil.
 func newConnection(
 	cfg MountConfig,
-	debugLogger *log.Logger,
-	errorLogger *log.Logger,
+	debugLogger log.Logger,
+	errorLogger log.Logger,
 	dev *os.File) (c *Connection, err error) {
 	c = &Connection{
 		cfg:         cfg,
@@ -203,7 +203,7 @@ func (c *Connection) debugLog(
 		fmt.Sprintf(format, v...))
 
 	// Print it.
-	c.debugLogger.Println(msg)
+	c.debugLogger.Debugf(msg)
 }
 
 // LOCKS_EXCLUDED(c.mu)
@@ -483,7 +483,7 @@ func (c *Connection) Reply(ctx context.Context, opErr error) {
 
 	// Error logging
 	if c.shouldLogError(op, opErr) {
-		c.errorLogger.Printf("%T error: %v", op, opErr)
+		c.errorLogger.Errorf("%T error: %v", op, opErr)
 	}
 
 	// Send the reply to the kernel, if one is required.

@@ -14,11 +14,11 @@ Refer to:
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"qs_common/log"
 	"strconv"
 	"strings"
 	"sync"
@@ -43,12 +43,12 @@ type Graceful struct {
 	restarting     bool
 	restartCb      GRestartCallback
 	pidFile        string
-	logger         *log.Logger
+	logger         log.Logger
 	lock           sync.Mutex
 	RestartTimeout int // In seconds, default 60s
 }
 
-func NewGraceful(logger *log.Logger, runDir string, progName string) *Graceful {
+func NewGraceful(logger log.Logger, runDir string, progName string) *Graceful {
 	gr := new(Graceful)
 	gr.startNoti = make(chan os.Signal, 1)
 	gr.stop = make(chan struct{})
@@ -79,8 +79,8 @@ func (gr *Graceful) GetDev(
 
 func (gr *Graceful) GetConnection(
 	cfg MountConfig,
-	debugLogger *log.Logger,
-	errorLogger *log.Logger,
+	debugLogger log.Logger,
+	errorLogger log.Logger,
 	dev *os.File) (err error) {
 	if gr.recovered {
 		env := os.Getenv("_GRACEFUL_RESTART")
@@ -157,7 +157,6 @@ func (gr *Graceful) checkRecover() {
 // Fork a child and pass the listeners fd to it
 func (gr *Graceful) Restart() (childPid int, err error) {
 	var version []string
-	extraFiles := make([]*os.File, 0)
 
 	version = append(
 		version,
@@ -165,7 +164,6 @@ func (gr *Graceful) Restart() (childPid int, err error) {
 		strconv.Itoa(int(gr.conn.protocol.Minor)),
 	)
 	ver_str := strings.Join(version, ",")
-	extraFiles = append(extraFiles, gr.dev)
 
 	// Pass fds to child using enviorments
 	os.Setenv("_GRACEFUL_RESTART", ver_str)
@@ -174,7 +172,7 @@ func (gr *Graceful) Restart() (childPid int, err error) {
 	child.Stdin = os.Stdin
 	child.Stdout = os.Stdout
 	child.Stderr = os.Stderr
-	child.ExtraFiles = extraFiles
+	child.ExtraFiles = []*os.File{gr.dev}
 	err = child.Start()
 	if err != nil {
 		err = fmt.Errorf("Fork child error: %v", err)

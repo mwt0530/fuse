@@ -17,7 +17,7 @@ package fuse
 import (
 	"context"
 	"fmt"
-	"log"
+	"qs_common/log"
 	"runtime"
 	"strings"
 )
@@ -41,11 +41,11 @@ type MountConfig struct {
 	// A logger to use for logging errors. All errors are logged, with the
 	// exception of a few blacklisted errors that are expected. If nil, no error
 	// logging is performed.
-	ErrorLogger *log.Logger
+	ErrorLogger log.Logger
 
 	// A logger to use for logging debug information. If nil, no debug logging is
 	// performed.
-	DebugLogger *log.Logger
+	DebugLogger log.Logger
 
 	// Linux only. OS X always behaves as if writeback caching is disabled.
 	//
