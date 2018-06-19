@@ -93,6 +93,14 @@ func convertInMessage(
 			to.Mtime = &t
 		}
 
+		if valid&fusekernel.SetattrUid != 0 {
+			to.Uid = &in.Uid
+		}
+
+		if valid&fusekernel.SetattrGid != 0 {
+			to.Gid = &in.Gid
+		}
+
 	case fusekernel.OpForget:
 		type input fusekernel.ForgetIn
 		in := (*input)(inMsg.Consume(unsafe.Sizeof(input{})))

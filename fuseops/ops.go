@@ -150,6 +150,8 @@ type SetInodeAttributesOp struct {
 	Mode  *os.FileMode
 	Atime *time.Time
 	Mtime *time.Time
+	Uid   *uint32
+	Gid   *uint32
 
 	// Set by the file system: the new attributes for the inode, and the time at
 	// which they should expire. See notes on
