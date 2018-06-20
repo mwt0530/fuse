@@ -164,9 +164,6 @@ func MountWithGraceful(
 	}
 	// Serve the connection in the background. When done, set the join status.
 	go func() {
-		// If filesystem server is started by restart signal, child process
-		// should wait SIGUSR1 from parent process, then read ops from /dev/fuse.
-		gr.ShouldWaitParent(syscall.SIGUSR1)
 		server.ServeOps(gr.conn)
 		if st := server.Stopped(); st {
 			// If filesystem server is stopped by restart signal,
@@ -181,7 +178,7 @@ func MountWithGraceful(
 
 	// Register restart callback
 	err = gr.Ready(syscall.SIGHUP, func() error {
-		child, err := gr.Restart()
+		_, err := gr.Restart()
 		if err != nil {
 			config.DebugLogger.Print("gracefule retart error: %v", err)
 			if err == ErrGRestartChildNotReady {
@@ -193,12 +190,9 @@ func MountWithGraceful(
 		}
 		// Stop readop of parent
 		server.Stop()
-		triggerOps(dir) // In case of parent is waiting for ops in kernel.
-		if err := syscall.Kill(child, syscall.SIGUSR1); err != nil {
-			config.DebugLogger.Println("Failed to end SIGUSR1 to child", child)
-		}
+		//triggerOps(dir) // In case of parent is waiting for ops in kernel.
 		close(gr.stop)
-		return err
+		return nil
 	})
 
 	if err != nil {

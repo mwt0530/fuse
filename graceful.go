@@ -119,20 +119,6 @@ func (gr *Graceful) GetConnection(
 	return
 }
 
-func (gr *Graceful) ShouldWaitParent(sig os.Signal) {
-	if !gr.recovered {
-		return
-	}
-	signal.Notify(gr.startNoti, sig)
-	// Child wait for signal SIGUSR1 and a timeout is set(since readop of parent is stopped).
-	select {
-	case <-time.After(70 * time.Second):
-		gr.logger.Println("Failed to receive SIGUSR1")
-	case <-gr.startNoti:
-		gr.logger.Println("Receive SIGUSR1")
-	}
-}
-
 // When program start, should check whether recover from graceful restart
 func (gr *Graceful) checkRecover() {
 	var err error
