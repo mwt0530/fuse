@@ -79,7 +79,7 @@ func convertInMessage(
 		}
 
 		if valid&fusekernel.SetattrMode != 0 {
-			mode := convertFileMode(in.Mode)
+			mode := in.Mode
 			to.Mode = &mode
 		}
 
@@ -139,7 +139,7 @@ func convertInMessage(
 			// the fact that this is a directory is implicit in the fact that the
 			// opcode is mkdir. But we want the correct mode to go through, so ensure
 			// that os.ModeDir is set.
-			Mode: convertFileMode(in.Mode) | os.ModeDir,
+			Mode: in.Mode | syscall.S_IFDIR,
 		}
 
 	case fusekernel.OpMknod:
@@ -160,7 +160,7 @@ func convertInMessage(
 		o = &fuseops.MkNodeOp{
 			Parent: fuseops.InodeID(inMsg.Header().Nodeid),
 			Name:   string(name),
-			Mode:   convertFileMode(in.Mode),
+			Mode:   in.Mode,
 		}
 
 	case fusekernel.OpCreate:
@@ -181,7 +181,7 @@ func convertInMessage(
 		o = &fuseops.CreateFileOp{
 			Parent: fuseops.InodeID(inMsg.Header().Nodeid),
 			Name:   string(name),
-			Mode:   convertFileMode(in.Mode),
+			Mode:   in.Mode | syscall.S_IFREG,
 		}
 
 	case fusekernel.OpSymlink:
@@ -853,25 +853,7 @@ func convertAttributes(
 	out.Blocks = (in.Size + 512 - 1) / 512
 
 	// Set the mode.
-	out.Mode = uint32(in.Mode) & 0777
-	switch {
-	default:
-		out.Mode |= syscall.S_IFREG
-	case in.Mode&os.ModeDir != 0:
-		out.Mode |= syscall.S_IFDIR
-	case in.Mode&os.ModeDevice != 0:
-		if in.Mode&os.ModeCharDevice != 0 {
-			out.Mode |= syscall.S_IFCHR
-		} else {
-			out.Mode |= syscall.S_IFBLK
-		}
-	case in.Mode&os.ModeNamedPipe != 0:
-		out.Mode |= syscall.S_IFIFO
-	case in.Mode&os.ModeSymlink != 0:
-		out.Mode |= syscall.S_IFLNK
-	case in.Mode&os.ModeSocket != 0:
-		out.Mode |= syscall.S_IFSOCK
-	}
+	out.Mode = in.Mode
 }
 
 // Convert an absolute cache expiration time to a relative time from now for

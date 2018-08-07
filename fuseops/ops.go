@@ -15,7 +15,6 @@
 package fuseops
 
 import (
-	"os"
 	"time"
 )
 
@@ -147,7 +146,7 @@ type SetInodeAttributesOp struct {
 
 	// The attributes to modify, or nil for attributes that don't need a change.
 	Size  *uint64
-	Mode  *os.FileMode
+	Mode  *uint32
 	Atime *time.Time
 	Mtime *time.Time
 	Uid   *uint32
@@ -228,7 +227,7 @@ type MkDirOp struct {
 
 	// The name of the child to create, and the mode with which to create it.
 	Name string
-	Mode os.FileMode
+	Mode uint32
 
 	// Set by the file system: information about the inode that was created.
 	//
@@ -255,7 +254,7 @@ type MkNodeOp struct {
 
 	// The name of the child to create, and the mode with which to create it.
 	Name string
-	Mode os.FileMode
+	Mode uint32
 
 	// Set by the file system: information about the inode that was created.
 	//
@@ -280,7 +279,7 @@ type CreateFileOp struct {
 
 	// The name of the child to create, and the mode with which to create it.
 	Name string
-	Mode os.FileMode
+	Mode uint32
 
 	// Set by the file system: information about the inode that was created.
 	//

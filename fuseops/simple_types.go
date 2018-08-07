@@ -16,7 +16,6 @@ package fuseops
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/jacobsa/fuse/internal/fusekernel"
@@ -85,7 +84,7 @@ type InodeAttributes struct {
 	//     several code paths if FUSE_DEFAULT_PERMISSIONS is unset. In contrast,
 	//     if that flag *is* set, then it calls generic_permission.
 	//
-	Mode os.FileMode
+	Mode uint32
 
 	// Time information. See `man 2 stat` for full details.
 	Atime  time.Time // Time of last access
