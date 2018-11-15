@@ -229,6 +229,10 @@ type MkDirOp struct {
 	Name string
 	Mode uint32
 
+	// UID/GID of the requesting process
+	Uid uint32
+	Gid uint32
+
 	// Set by the file system: information about the inode that was created.
 	//
 	// The lookup count for the inode is implicitly incremented. See notes on
@@ -256,6 +260,10 @@ type MkNodeOp struct {
 	Name string
 	Mode uint32
 
+	// UID/GID of the requesting process
+	Uid uint32
+	Gid uint32
+
 	// Set by the file system: information about the inode that was created.
 	//
 	// The lookup count for the inode is implicitly incremented. See notes on
@@ -280,6 +288,10 @@ type CreateFileOp struct {
 	// The name of the child to create, and the mode with which to create it.
 	Name string
 	Mode uint32
+
+	// UID/GID of the requesting process
+	Uid uint32
+	Gid uint32
 
 	// Set by the file system: information about the inode that was created.
 	//
@@ -309,6 +321,10 @@ type CreateSymlinkOp struct {
 
 	// The target of the symlink.
 	Target string
+
+	// UID/GID of the requesting process
+	Uid uint32
+	Gid uint32
 
 	// Set by the file system: information about the symlink inode that was
 	// created.

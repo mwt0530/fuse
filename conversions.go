@@ -41,7 +41,9 @@ func convertInMessage(
 	inMsg *buffer.InMessage,
 	outMsg *buffer.OutMessage,
 	protocol fusekernel.Protocol) (o interface{}, err error) {
-	switch inMsg.Header().Opcode {
+	header := inMsg.Header()
+
+	switch header.Opcode {
 	case fusekernel.OpLookup:
 		buf := inMsg.ConsumeBytes(inMsg.Len())
 		n := len(buf)
@@ -140,6 +142,8 @@ func convertInMessage(
 			// opcode is mkdir. But we want the correct mode to go through, so ensure
 			// that os.ModeDir is set.
 			Mode: in.Mode | syscall.S_IFDIR,
+			Uid:  header.Uid,
+			Gid:  header.Gid,
 		}
 
 	case fusekernel.OpMknod:
@@ -161,6 +165,8 @@ func convertInMessage(
 			Parent: fuseops.InodeID(inMsg.Header().Nodeid),
 			Name:   string(name),
 			Mode:   in.Mode,
+			Uid:    header.Uid,
+			Gid:    header.Gid,
 		}
 
 	case fusekernel.OpCreate:
@@ -182,6 +188,8 @@ func convertInMessage(
 			Parent: fuseops.InodeID(inMsg.Header().Nodeid),
 			Name:   string(name),
 			Mode:   in.Mode | syscall.S_IFREG,
+			Uid:    header.Uid,
+			Gid:    header.Gid,
 		}
 
 	case fusekernel.OpSymlink:
@@ -202,6 +210,8 @@ func convertInMessage(
 			Parent: fuseops.InodeID(inMsg.Header().Nodeid),
 			Name:   string(newName),
 			Target: string(target),
+			Uid:    header.Uid,
+			Gid:    header.Gid,
 		}
 
 	case fusekernel.OpRename:
