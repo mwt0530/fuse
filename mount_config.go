@@ -17,9 +17,10 @@ package fuse
 import (
 	"context"
 	"fmt"
-	"qs_common/log"
 	"runtime"
 	"strings"
+
+	"git.qingstor.dev/common/log"
 )
 
 // Optional configuration accepted by Mount.

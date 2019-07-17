@@ -18,11 +18,12 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
-	"qs_common/log"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"git.qingstor.dev/common/log"
 )
 
 var ErrGRestartFailed = errors.New("gracefule restart failed, child exited")

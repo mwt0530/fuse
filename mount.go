@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	_ "qs_common/log"
 	"syscall"
 )
 
