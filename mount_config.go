@@ -20,7 +20,7 @@ import (
 	"runtime"
 	"strings"
 
-	"git.qingstor.dev/common/log"
+	"git.qingstor.dev/global/common/log"
 )
 
 // Optional configuration accepted by Mount.

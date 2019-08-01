@@ -24,7 +24,7 @@ import (
 	"sync"
 	"syscall"
 
-	"git.qingstor.dev/common/log"
+	"git.qingstor.dev/global/common/log"
 
 	"github.com/jacobsa/fuse/fuseops"
 	"github.com/jacobsa/fuse/internal/buffer"

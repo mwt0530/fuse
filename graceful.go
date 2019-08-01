@@ -23,7 +23,7 @@ import (
 	"sync"
 	"time"
 
-	"git.qingstor.dev/common/log"
+	"git.qingstor.dev/global/common/log"
 )
 
 var ErrGRestartFailed = errors.New("gracefule restart failed, child exited")
